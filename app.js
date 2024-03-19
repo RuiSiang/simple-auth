@@ -20,7 +20,7 @@ router.get('/auth', async (ctx) => {
   ctx.body = fs.readFileSync('./auth.html', 'utf8');
 });
 
-router.get('/verify', async (ctx) => {
+router.get('/auth/verify', async (ctx) => {
   if (ctx.session.authenticated) {
     const requestedUrl = ctx.get('X-Original-URI');
     const isAllowed = ctx.session.scopes.some(scope => requestedUrl.startsWith(scope));
