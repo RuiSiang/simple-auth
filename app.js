@@ -6,7 +6,7 @@ const fs = require('fs');
 
 const app = new Koa();
 const router = new Router();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 const config = JSON.parse(fs.readFileSync('./config.json', 'utf8'));
 
