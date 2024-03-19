@@ -18,6 +18,9 @@ app.use(bodyParser());
 router.get('/auth', async (ctx) => {
   ctx.type = 'html';
   ctx.body = fs.readFileSync('./auth.html', 'utf8');
+  if (ctx.query.originalUrl) {
+    ctx.session.originalUrl = ctx.query.originalUrl;
+  }
 });
 
 router.get('/auth/verify', async (ctx) => {
@@ -49,7 +52,13 @@ router.post('/auth', async (ctx) => {
   }
   ctx.session.authenticated = true;
   ctx.session.scopes = allowedScopes;
-  ctx.body = 'Authenticated successfully.';
+
+  if (ctx.session.originalUrl) {
+    ctx.redirect(ctx.session.originalUrl);
+    ctx.session.originalUrl = null;
+  } else {
+    ctx.body = 'Authenticated successfully.';
+  }
 });
 
 app.use(router.routes()).use(router.allowedMethods());
