@@ -20,7 +20,7 @@ router.get('/auth', async (ctx) => {
   ctx.body = fs.readFileSync('./auth.html', 'utf8');
   if (ctx.query.originalUrl) {
     const originalUrl = ctx.query.originalUrl;
-    if (isValidUrl(originalUrl)) {
+    if (originalUrl.startsWith('/')) {
       ctx.session.originalUrl = originalUrl;
     } else {
       console.warn('Invalid URL attempt:', originalUrl);
@@ -28,15 +28,6 @@ router.get('/auth', async (ctx) => {
     }
   }
 });
-
-function isValidUrl(url) {
-  try {
-    const parsedUrl = new URL(url, `https://${ctx.request.host}`);
-    return url.startsWith('/') || parsedUrl.hostname === ctx.request.host;
-  } catch (error) {
-    return false;
-  }
-}
 
 router.get('/auth/verify', async (ctx) => {
   if (ctx.session.authenticated) {
@@ -68,16 +59,11 @@ router.post('/auth', async (ctx) => {
   ctx.session.authenticated = true;
   ctx.session.scopes = allowedScopes;
 
-  if (ctx.session.originalUrl) {
-    const url = new URL(ctx.session.originalUrl, `https://${ctx.request.host}`);
-    if (url.hostname === ctx.request.host) {
-      ctx.redirect(ctx.session.originalUrl);
-    } else {
-      ctx.redirect('/');
-    }
+  if (ctx.session.originalUrl && ctx.session.originalUrl.startsWith('/')) {
+    ctx.redirect(ctx.session.originalUrl);
     ctx.session.originalUrl = null;
   } else {
-    ctx.body = 'Authenticated successfully.';
+    ctx.redirect('/');
   }
 });
 
