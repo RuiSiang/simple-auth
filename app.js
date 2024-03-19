@@ -54,7 +54,12 @@ router.post('/auth', async (ctx) => {
   ctx.session.scopes = allowedScopes;
 
   if (ctx.session.originalUrl) {
-    ctx.redirect(ctx.session.originalUrl);
+    const url = new URL(ctx.session.originalUrl, `https://${ctx.request.host}`);
+    if (url.hostname === ctx.request.host) {
+      ctx.redirect(ctx.session.originalUrl);
+    } else {
+      ctx.redirect('/');
+    }
     ctx.session.originalUrl = null;
   } else {
     ctx.body = 'Authenticated successfully.';
