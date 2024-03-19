@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Authentication</title>
+    <style>
+      body {
+        font-family: 'Helvetica Neue', Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: #f7f7f7;
+      }
+      form {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      input,
+      button {
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        box-sizing: border-box;
+      }
+      button {
+        background-color: #0056b3;
+        color: white;
+        border: none;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #004494;
+      }
+      .form-header {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      .form-header h2 {
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <form action="/auth" method="post">
+      <div class="form-header">
+        <h2>RS Labs</h2>
+      </div>
+      <input type="text" name="token" placeholder="Enter your token" required />
+      <button type="submit">Authenticate</button>
+    </form>
+  </body>
+</html>
