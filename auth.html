@@ -47,11 +47,11 @@
     </style>
   </head>
   <body>
-    <form action="/auth" method="post">
+    <form action="/auth" method="post" enctype="application/json">
       <div class="form-header">
         <h2>RS Labs</h2>
       </div>
-      <input type="text" name="token" placeholder="Enter your token" enctype="application/json" required />
+      <input type="text" name="token" placeholder="Enter your token" required />
       <button type="submit">Authenticate</button>
     </form>
   </body>
