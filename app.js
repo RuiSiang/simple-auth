@@ -20,20 +20,25 @@ router.get('/auth', async (ctx) => {
   ctx.body = fs.readFileSync('./auth.html', 'utf8');
 });
 
-router.post('/auth', async (ctx) => {
+router.get('/verify', async (ctx) => {
   if (ctx.session.authenticated) {
     const requestedUrl = ctx.get('X-Original-URI');
     const isAllowed = ctx.session.scopes.some(scope => requestedUrl.startsWith(scope));
 
     if (isAllowed) {
+      ctx.status = 200;
       ctx.body = 'Access granted.';
     } else {
       ctx.status = 403;
       ctx.body = 'Access denied: The token does not have permission for this scope.';
     }
-    return;
+  } else {
+    ctx.status = 401;
+    ctx.body = 'Authentication required.';
   }
+});
 
+router.post('/auth', async (ctx) => {
   const { token } = ctx.request.body;
   const allowedScopes = config.tokens[token];
 
@@ -42,18 +47,9 @@ router.post('/auth', async (ctx) => {
     ctx.body = 'Authentication failed: Invalid token.';
     return;
   }
-
-  const requestedUrl = ctx.get('X-Original-URI');
-  const isAllowed = allowedScopes.some(scope => requestedUrl.startsWith(scope));
-
-  if (isAllowed) {
-    ctx.session.authenticated = true;
-    ctx.session.scopes = allowedScopes;
-    ctx.body = 'Authenticated successfully.';
-  } else {
-    ctx.status = 403;
-    ctx.body = 'Access denied: The token does not have permission for this scope.';
-  }
+  ctx.session.authenticated = true;
+  ctx.session.scopes = allowedScopes;
+  ctx.body = 'Authenticated successfully.';
 });
 
 app.use(router.routes()).use(router.allowedMethods());
