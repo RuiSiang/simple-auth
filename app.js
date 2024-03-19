@@ -19,9 +19,24 @@ router.get('/auth', async (ctx) => {
   ctx.type = 'html';
   ctx.body = fs.readFileSync('./auth.html', 'utf8');
   if (ctx.query.originalUrl) {
-    ctx.session.originalUrl = ctx.query.originalUrl;
+    const originalUrl = ctx.query.originalUrl;
+    if (isValidUrl(originalUrl)) {
+      ctx.session.originalUrl = originalUrl;
+    } else {
+      console.warn('Invalid URL attempt:', originalUrl);
+      ctx.session.originalUrl = '/';
+    }
   }
 });
+
+function isValidUrl(url) {
+  try {
+    const parsedUrl = new URL(url, `https://${ctx.request.host}`);
+    return url.startsWith('/') || parsedUrl.hostname === ctx.request.host;
+  } catch (error) {
+    return false;
+  }
+}
 
 router.get('/auth/verify', async (ctx) => {
   if (ctx.session.authenticated) {
